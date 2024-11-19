@@ -89,16 +89,48 @@ app.get('/test', (res) => {
 app.post('/voice', (res) => {
     const response = new VoiceResponse();
 
+    response.redirect('/prompt');
+
+    const response = new VoiceResponse();
+
     const gather = response.gather({
         numDigits: 1,
         action: '/handle-gather',
         method: 'POST'
     });
 
-    gather.say({ voice: 'man' }, 'Welcome. Press 1 to identify a song.');
+    gather.say({ voice: 'man' }, "Press any key to identify what's playing nearby.");
 
-    response.say('We did not receive any input. Goodbye!');
-    response.hangup();
+    response.redirect({ method: 'POST' }, '/repeat-prompt?attempt=1');
+
+    res.type('text/xml');
+    res.send(response.toString());
+});
+
+app.post('/repeat-prompt', (req, res) => {
+    const attempt = parseInt(req.query.attempt, 10);
+
+    if (attempt > 2) {
+        const response = new VoiceResponse();
+        response.say({ voice: 'man' }, 'We did not receive any input. Goodbye!');
+        response.hangup();
+        res.type('text/xml');
+        return res.send(response.toString());
+    }
+
+    const response = new VoiceResponse();
+    const gather = response.gather({
+        numDigits: 1,
+        action: '/handle-gather',
+        method: 'POST'
+    });
+
+    gather.say({ voice: 'man' }, "Press any key to identify what's playing nearby.");
+
+    // Wait 5 seconds
+    response.pause({ length: 5 });
+    // Repeat prompt
+    response.redirect({ method: 'POST' }, `/repeat-prompt?attempt=${attempt + 1}`);
 
     res.type('text/xml');
     res.send(response.toString());
@@ -106,10 +138,10 @@ app.post('/voice', (res) => {
 
 app.post('/handle-gather', (req, res) => {
     const digit = req.body.Digits;
-
     const response = new VoiceResponse();
 
-    if (digit === '1') {
+    if (digit) {
+        // response.say('Please wait while we identify your song.');
         response.record({
             maxLength: 7,
             action: '/handle-recording',
@@ -117,9 +149,6 @@ app.post('/handle-gather', (req, res) => {
             transcribe: false,
             playBeep: true
         });
-
-        response.say('Audio received. We will send you a message shortly. Goodbye!');
-        response.hangup();
     } else {
         response.say('Invalid input. Goodbye!');
         response.hangup();
@@ -163,7 +192,7 @@ app.post('/handle-recording', async (req, res) => {
 
                 if (shazamResult === null) {
                     console.log('Could not identify song.');
-                    return;
+                    return respondWithVoice(req, res, 'Sorry, we could not identify the song. Please try again later.');
                 }
 
                 const song = shazamResult?.track?.title || 'unknown';
@@ -171,15 +200,20 @@ app.post('/handle-recording', async (req, res) => {
 
                 console.log(`Identified: "${song}" by "${artist}"`);
 
-                // Send SMS with results
-                // const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-                // await twilioClient.messages.create({
-                //     body: `Song identified!\n"${song}" by "${artist}".`,
-                //     from: process.env.TWILIO_PHONE_NUMBER,
-                //     to: req.body.From
-                // });
+                const messageParts = [
+                    { text: 'The song is', voice: 'man' },
+                    // { text: song, voice: containsHebrew(song) ? 'Google.he-IL-Standard-D' : 'man' },
+                    { text: song, voice: 'Google.he-IL-Standard-D' },
+                    { text: 'by', voice: 'man' },
+                    { text: artist + '.', voice: 'Google.he-IL-Standard-D' },
+                    { text: '<break> <break> This detection has been achieved thanks to our platinum sponsor: <break>', voice: 'man' },
+                    { text: 'ישיבת תפארת ישראל.', voice: 'Google.he-IL-Standard-D' },
+                    { text: '<break> <break> <break> Goodbye! ', voice: 'man' }
+                    // { text: artist, voice: containsHebrew(artist) ? 'Google.he-IL-Standard-D' : 'man' }
+                ];
 
-                // console.log('Results sent via SMS.');
+                // Say the identified song
+                respondWithDynamicVoice(req, res, messageParts);
 
                 // Delete raw file (and maybe also the original recording down the line)
                 [rawAudioPath].forEach((file) => {
@@ -189,14 +223,39 @@ app.post('/handle-recording', async (req, res) => {
                 });
             } catch (error) {
                 console.error('Error processing or identifying audio:', error.message);
+                respondWithVoice(req, res, 'An error occurred while identifying the song.');
             }
         });
     } catch (error) {
         console.error('Error handling recording:', error.message);
+        respondWithVoice(req, res, 'Could not process your recording. Goodbye.');
     }
-
-    res.sendStatus(200);
 });
+
+function containsHebrew(text) {
+    return /[\u0590-\u05FF]/.test(text);
+}
+
+function respondWithDynamicVoice(req, res, messageParts) {
+    const response = new VoiceResponse();
+
+    messageParts.forEach((part) => {
+        response.say({ voice: part.voice }, part.text);
+    });
+
+    response.hangup();
+    res.type('text/xml');
+    res.send(response.toString());
+}
+
+function respondWithVoice(req, res, message) {
+    const response = new VoiceResponse();
+    response.say({ voice: 'man' }, message);
+    response.hangup();
+
+    res.type('text/xml');
+    res.send(response.toString());
+}
 
 app.post('/recording-status', (req, res) => {
     console.log('[Twilio] Recording status:', req.body.RecordingStatus);
@@ -206,5 +265,5 @@ app.post('/recording-status', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Shazamin!! >:)`);
-    console.log(`Feed me data at port ${PORT}`);
+    console.log(`Call me on port ${PORT} 🤙`);
 });
