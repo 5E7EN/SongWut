@@ -91,6 +91,11 @@ app.post('/voice', (res) => {
 
     response.redirect('/prompt');
 
+    res.type('text/xml');
+    res.send(response.toString());
+});
+
+app.post('/prompt', (req, res) => {
     const response = new VoiceResponse();
 
     const gather = response.gather({
