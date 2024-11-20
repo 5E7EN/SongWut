@@ -88,8 +88,8 @@ app.use(morgan('dev'));
 // Twilio Voice API
 const VoiceResponse = twilio.twiml.VoiceResponse;
 
-app.get('/test', (res) => {
-    res.send('xD');
+app.get('/test', (req, res) => {
+    return res.send('xD');
 });
 
 app.post('/voice', (req, res) => {
