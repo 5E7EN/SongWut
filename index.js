@@ -9,11 +9,17 @@ const morgan = require('morgan');
 require('dotenv').config();
 
 // Constants
-const INPUT_DIR = './temp';
+const INPUT_DIR = './temp'; // Directory for temp audio files
+const RESPONSE_DIR = './responses'; // Directory for json responses from Shazam API
 
 // Ensure temp dir exists, create if not
 if (!fs.existsSync(INPUT_DIR)) {
     fs.mkdirSync(INPUT_DIR, { recursive: true });
+}
+
+// Ensure responses dir exist, create if not
+if (!fs.existsSync(RESPONSE_DIR)) {
+    fs.mkdirSync(RESPONSE_DIR, { recursive: true });
 }
 
 async function convertAudio(filePath) {
@@ -86,7 +92,7 @@ app.get('/test', (res) => {
     res.send('xD');
 });
 
-app.post('/voice', (res) => {
+app.post('/voice', (req, res) => {
     const response = new VoiceResponse();
 
     response.redirect('/prompt');
@@ -173,7 +179,7 @@ app.post('/handle-recording', async (req, res) => {
         // Wait for 3 seconds (sometimes recording is available right away)
         await new Promise((resolve) => setTimeout(resolve, 3000));
 
-        const response = await axios({
+        const downloadResponse = await axios({
             method: 'get',
             url: recordingUrl,
             responseType: 'stream',
@@ -184,9 +190,10 @@ app.post('/handle-recording', async (req, res) => {
         });
 
         // Save unique recording to local file
-        const localAudioPath = path.join(INPUT_DIR, `${req.body.From}_${Date.now()}.wav`);
+        const timestamp = Date.now();
+        const localAudioPath = path.join(INPUT_DIR, `${req.body.From}_${timestamp}.wav`);
         const writer = fs.createWriteStream(localAudioPath);
-        response.data.pipe(writer);
+        downloadResponse.data.pipe(writer);
 
         writer.on('finish', async () => {
             console.log('Audio recording downloaded.');
@@ -226,6 +233,10 @@ app.post('/handle-recording', async (req, res) => {
                         fs.unlinkSync(file);
                     }
                 });
+
+                // Save Shazam API response to a unique JSON file
+                const jsonFilePath = path.join(RESPONSE_DIR, `${req.body.From}_${timestamp}.json`);
+                fs.writeFileSync(jsonFilePath, JSON.stringify(shazamResult, null, 2), 'utf-8');
             } catch (error) {
                 console.error('Error processing or identifying audio:', error.message);
                 respondWithVoice(req, res, 'An error occurred while identifying the song.');
