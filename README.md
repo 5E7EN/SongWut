@@ -1,6 +1,6 @@
-# Shazamin
+# SongWut
 
-Shazam but via Phone-In
+Shazam, but via Phone-In, for yeshivalite. Wut??
 
 # Requirements
 
