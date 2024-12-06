@@ -1,0 +1,180 @@
+[custom-songwut-handler]
+exten => s,1,Answer()
+same => n(start),Background(/var/lib/asterisk/sounds/en/custom/Welcome_PressAnyKeyToIdentify)
+same => n,WaitExten(5)
+
+same => n,Background(/var/lib/asterisk/sounds/en/custom/PressAnyKeyToIdentify)
+same => n,WaitExten(5)
+same => n,Background(/var/lib/asterisk/sounds/en/custom/PressAnyKeyToIdentify)
+same => n,WaitExten(5)
+
+same => n,Playback(/var/lib/asterisk/sounds/en/custom/NoInputGoodbye)
+same => n,Hangup()
+
+exten => _X,1,Record(/var/spool/asterisk/recordings/${CALLERID(num)}-${STRFTIME(${EPOCH},,%Y%m%d-%H%M%S)}.wav,4,7)
+
+same => n,Playback(/var/lib/asterisk/sounds/en/custom/boing_boing_test) ; Test message, replace with result
+same => n,Hangup()
+
+---
+
+[custom-songwut-handler]
+exten => s,1,Answer()
+same => n(start),Background(/var/lib/asterisk/sounds/en/custom/Welcome_PressAnyKeyToIdentify)
+same => n,WaitExten(5)
+
+same => n,Background(/var/lib/asterisk/sounds/en/custom/PressAnyKeyToIdentify)
+same => n,WaitExten(5)
+same => n,Background(/var/lib/asterisk/sounds/en/custom/PressAnyKeyToIdentify)
+same => n,WaitExten(5)
+
+same => n,Playback(/var/lib/asterisk/sounds/en/custom/NoInputGoodbye)
+same => n,Hangup()
+
+; Set the target recording filename
+exten => _X,1,Set(FILENAME=${CALLERID(num)}-${STRFTIME(${EPOCH},,%Y%m%d-%H%M%S)}.wav)
+
+; Record the audio file with a beep and 7 seconds limit
+same => n,Record(/var/spool/asterisk/recordings/${FILENAME},4,7)
+
+; Execute the Node.js script with the recorded file path and caller ID
+same => n,System(node /path/to/your-script.js /var/spool/asterisk/recordings/${FILENAME} ${CALLERID(num)} > /tmp/script_output_${UNIQUEID}.txt)
+
+; Capture the output and log it
+same => n,Set(SCRIPT_RESULT=${SHELL(cat /tmp/script_output_${UNIQUEID}.txt)})
+same => n,NoOp(Script output: ${SCRIPT_RESULT})
+
+; Clean up the temporary file
+same => n,System(rm /tmp/script_output_${UNIQUEID}.txt)
+
+same => n,Playback(/var/lib/asterisk/sounds/en/custom/boing_boing_test)
+same => n,Hangup()
+
+---
+
+[custom-songwut-handler]
+exten => s,1,Answer()
+same => n(start),Background(/var/lib/asterisk/sounds/en/custom/Welcome_PressAnyKeyToIdentify)
+same => n,WaitExten(5)  ; Wait for input for 5 seconds
+
+same => n,Background(/var/lib/asterisk/sounds/en/custom/PressAnyKeyToIdentify)
+same => n,WaitExten(5)
+same => n,Background(/var/lib/asterisk/sounds/en/custom/PressAnyKeyToIdentify)
+same => n,WaitExten(5)
+
+same => n,Playback(/var/lib/asterisk/sounds/en/custom/NoInputGoodbye)
+same => n,Hangup()
+
+exten => _X,1,Playback(beep)
+same => n,Set(TALK_DETECT(set)=on) ; Forcefully enable TALK_DETECT
+same => n,Wait(1)                  ; Give time for TALK_DETECT to initialize
+same => n,Record(/var/spool/asterisk/recordings/${CALLERID(num)}-${STRFTIME(${EPOCH},,%Y%m%d-%H%M%S)}.wav,5,7,q)
+
+same => n,Wait(1) ; Give time for TALK_DETECT to process after recording
+
+same => n,NoOp(TALK_DETECTED=${TALK_DETECTED}) ; Log the TALK_DETECTED variable
+same => n,GotoIf($["${TALK_DETECTED}" = "yes"]?done:silence)
+
+same => n(silence),Playback(/var/lib/asterisk/sounds/en/custom/CouldNotHearSoundTryAgainGoodbye)
+same => n,Hangup()
+
+same => n(done),Playback(/var/lib/asterisk/sounds/en/custom/boing_boing_test)
+same => n,Hangup()
+
+
+---
+
+[custom-songwut-handler]
+exten => s,1,Answer()
+same => n(start),Background(/var/lib/asterisk/sounds/en/custom/Welcome_PressAnyKeyToIdentify)
+same => n,WaitExten(5)
+
+same => n,Background(/var/lib/asterisk/sounds/en/custom/PressAnyKeyToIdentify)
+same => n,WaitExten(5)
+same => n,Background(/var/lib/asterisk/sounds/en/custom/PressAnyKeyToIdentify)
+same => n,WaitExten(5)
+
+same => n,Playback(/var/lib/asterisk/sounds/en/custom/NoInputGoodbye)
+same => n,Hangup()
+
+; Sanitize caller ID and set the target recording filename
+exten => _X,1,Set(SANITIZED_CALLERID=${FILTER(0-9,${CALLERID(num)})})
+same => n,Set(FILENAME=/var/spool/asterisk/recordings/${SANITIZED_CALLERID}-${STRFTIME(${EPOCH},,%Y%m%d-%H%M%S)}.wav)
+
+; Record the audio file with a beep and 7 seconds limit
+;same => n,Record(${FILENAME},4,7)
+
+; Execute the Node.js script with the recorded file path and caller ID
+same => n,Set(result=${SHELL(node /var/lib/asterisk/scripts/songwut/detectAndNotify.js ${FILENAME} ${SANITIZED_CALLERID})});
+same => n,NoOp(Song detection result: ${result})
+
+same => n,GotoIf($["${result}" = "success"]?success:failure)
+
+same => n(success),Playback(/var/lib/asterisk/sounds/en/custom/boing_boing_test)
+same => n,Hangup()
+
+same => n(failure),GotoIf($["${result}" = "no_detect"]?nodetect:error)
+
+same => n(nodetect),Playback(/var/lib/asterisk/sounds/en/custom/CouldNotIdentifySongTryAgainLater)
+same => n,Hangup()
+
+same => n(error),Playback(/var/lib/asterisk/sounds/en/custom/AnErrorOccuredTryAgainLaterGoodbye)
+same => n,Playback(/var/lib/asterisk/sounds/en/custom/AnErrorOccuredTryAgainLaterGoodbye)
+same => n,Hangup()
+
+---
+
+[custom-songwut-handler]
+exten => s,1,Answer()
+ same => n(start),Background(custom/Welcome_PressAnyKeyToIdentify)
+ same => n,WaitExten(5)
+
+ ; Repeat the prompt twice before hanging up
+ same => n,Background(custom/PressAnyKeyToIdentify)
+ same => n,WaitExten(5)
+ same => n,Background(custom/PressAnyKeyToIdentify)
+ same => n,WaitExten(5)
+
+ ; No input response
+ same => n,Playback(custom/NoInputGoodbye)
+ same => n,Wait(1) 
+ same => n,Hangup()
+
+ ; Sanitize caller ID and set filename for recording
+exten => _X,1,Set(SANITIZED_CALLERID=${FILTER(0-9,${CALLERID(num)})})
+ same => n,Set(FILENAME=/var/spool/asterisk/recordings/${SANITIZED_CALLERID}-${STRFTIME(${EPOCH},,%Y%m%d-%H%M%S)}.wav)
+
+ ; Record 7 seconds of audio, stopping after only 4 seconds if line is silent
+ same => n,Record(${FILENAME},4,7)
+
+ ; Check the recording duration, if it's under 5 seconds we know it's no audio and handle accordingly
+ same => n,Set(DURATION=${SHELL(soxi -D ${FILENAME} | cut -d '.' -f 1)})
+ same => n,GotoIf($[${DURATION} > 5]?process:short)
+
+ ; Handle short recordings - delete it, play message, and hangup
+ same => n(short),System(rm -f ${FILENAME})
+ same => n,Playback(custom/CouldNotHearSoundTryAgainGoodbye)
+ same => n,Wait(1) 
+ same => n,Hangup()
+
+ ; Process valid recordings - run song detection script and handle based on result
+ same => n(process),Set(result=${SHELL(node /var/lib/asterisk/scripts/songwut/detectAndNotify.js ${FILENAME} ${SANITIZED_CALLERID})})
+ same => n,NoOp(Song detection result: ${result})
+ same => n,GotoIf($["${result}" = "success"]?success:failure)
+
+ ; Handle success and failure cases
+ same => n(success),Playback(custom/SongIdentifiedTextSentHaveAGreatDay)
+ same => n,Wait(1) 
+ same => n,Hangup()
+
+ same => n(failure),GotoIf($["${result}" = "no_detect"]?nodetect:error)
+
+ ; No detection case
+ same => n(nodetect),Playback(custom/CouldNotIdentifySongTryAgainLater)
+ same => n,Wait(1) 
+ same => n,Hangup()
+
+ ; Error case
+ same => n(error),Playback(custom/AnErrorOccuredTryAgainLaterGoodbye)
+ same => n,Wait(1) 
+ same => n,Hangup()
