@@ -18,4 +18,4 @@ More complicated, but more control.
 
 ## Credits
 
--   Special thanks to YumiR for his vast knowledge and dedication for this version.
+-   Special thanks to YumiR for his vast knowledge and dedication towards the Asterisk version. It wouldn't have happened without him.
