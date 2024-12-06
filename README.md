@@ -6,7 +6,7 @@ Shazam, but via Phone-In, for yeshivalite. Wut??
 
 #### Twilio (`twilio/`)
 
-An API serving the backend for Twilio webhook calls.
+An API serving as a backend for Twilio webhook calls.
 
 ### Asterisk (`asterisk/`)
 
