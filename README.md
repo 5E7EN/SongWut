@@ -16,4 +16,6 @@ We used Vultr to host the Asterisk/FreePBX server.
 
 More complicated, but more control.
 
-#### Special thanks to YumiR for his vast knowledge and dedication for this version.
+## Credits
+
+-   Special thanks to YumiR for his vast knowledge and dedication for this version.
