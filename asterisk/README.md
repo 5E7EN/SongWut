@@ -4,7 +4,9 @@ Configured on a FreePBX server.
 
 ## Setup
 
-Coming soon...
+-   Install nodejs via NVM (v16.20.2 works fine)
+
+More coming soon...
 
 ## Helpful Commands
 
