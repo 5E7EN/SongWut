@@ -16,3 +16,4 @@ More coming soon...
 -   `nano /etc/asterisk/extensions_custom.conf`
 -   `asterisk -rx "dialplan reload"`
 -   `tail -f /var/log/asterisk/full`
+-   `tail -f /var/lib/asterisk/agi-bin/songwut/logs/full.log`

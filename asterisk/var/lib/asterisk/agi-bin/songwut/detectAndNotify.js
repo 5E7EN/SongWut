@@ -25,7 +25,8 @@ const logger = winston.createLogger({
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         winston.format.printf(
             ({ timestamp, message, level }) =>
-                `${timestamp} - ${level.toUpperCase()} [${audioClipFilename}] ${message}`
+                `${timestamp} - ${level.toUpperCase().padEnd(7)} ` +
+                `[${audioClipFilename}] ${message}`
         )
     ),
     // Log to files (`combined.log` and `<audioClipFilename>.log` in `./logs`)
@@ -140,7 +141,7 @@ async function identifyAudioFile(filePath) {
         // Return title and artist
         return data;
     } catch (error) {
-        logger.error('Error uploading to Shazam API:', error.message);
+        logger.error(`Error uploading to Shazam API: ${error.message}`);
         throw error;
     }
 }
@@ -148,7 +149,7 @@ async function identifyAudioFile(filePath) {
 (async () => {
     // Ensure audio file exists
     if (!fs.existsSync(audioClipPath)) {
-        logger.error('Audio file does not exist:', audioClipPath);
+        logger.error(`Audio file does not exist: ${audioClipPath}`);
         process.stdout.write('error_audio_file_not_found');
         process.exit(1);
     }
@@ -194,7 +195,7 @@ async function identifyAudioFile(filePath) {
         fs.writeFileSync(jsonFilePath, JSON.stringify(shazamResult, null, 2), 'utf-8');
         logger.debug(`Shazam API response saved to ${jsonFilePath}`);
     } catch (error) {
-        logger.error('Error processing or identifying audio:', error.message);
+        logger.error(`Error processing or identifying audio: ${error.message}`);
 
         if (!DEBUG__LOG_TO_CONSOLE) {
             process.stdout.write(`error_processing_or_identifying:${error.message}`);
