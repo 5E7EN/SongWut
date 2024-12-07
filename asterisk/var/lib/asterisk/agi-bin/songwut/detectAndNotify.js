@@ -14,7 +14,7 @@ const DEBUG__LOG_TO_CONSOLE = false;
 const LOG_LEVEL = 'debug'; // Winston log level
 const SHAZAM_RESPONSES_DIR = path.join(__dirname, 'responses'); // Directory for json responses from Shazam API
 const LOGS_DIR = path.join(__dirname, 'logs'); // Directory for log files
-const audioClipPath = process.argv[2]; // Path to the recorded file
+const audioClipPath = process.argv[2]; // Path to the recorded file passed from Asterisk
 const callerNumber = process.argv[3]; // Caller ID passed from Asterisk
 const audioClipFilename = path.basename(audioClipPath, path.extname(audioClipPath)); // Filename without path or extension
 
