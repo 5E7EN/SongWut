@@ -4,7 +4,7 @@ const { spawn } = require('child_process');
 const axios = require('axios');
 const winston = require('winston');
 
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 // Change this to 'true' to enable logging to console, but don't forget to change it back
 // before invoking via Asterisk - because Asterisk determines success based on the first stdout line.
