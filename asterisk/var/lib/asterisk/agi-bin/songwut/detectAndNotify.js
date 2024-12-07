@@ -63,6 +63,12 @@ if (!fs.existsSync(SHAZAM_RESPONSES_DIR)) {
     fs.mkdirSync(SHAZAM_RESPONSES_DIR, { recursive: true });
 }
 
+// Ensure logs dir exist, create if not
+if (!fs.existsSync(LOGS_DIR)) {
+    logger.debug('Creating directory for invocation logs:', LOGS_DIR);
+    fs.mkdirSync(LOGS_DIR, { recursive: true });
+}
+
 async function convertAudio(filePath) {
     return new Promise((resolve, reject) => {
         logger.info('Converting to raw audio file...');
