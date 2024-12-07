@@ -60,13 +60,13 @@ if (!audioClipPath || !callerNumber) {
 
 // Ensure responses dir exist, create if not
 if (!fs.existsSync(SHAZAM_RESPONSES_DIR)) {
-    logger.debug('Creating directory for Shazam API response files:', SHAZAM_RESPONSES_DIR);
+    logger.debug(`Creating directory for Shazam API response files: ${SHAZAM_RESPONSES_DIR}`);
     fs.mkdirSync(SHAZAM_RESPONSES_DIR, { recursive: true });
 }
 
 // Ensure logs dir exist, create if not
 if (!fs.existsSync(LOGS_DIR)) {
-    logger.debug('Creating directory for invocation logs:', LOGS_DIR);
+    logger.debug(`Creating directory for invocation logs: ${LOGS_DIR}`);
     fs.mkdirSync(LOGS_DIR, { recursive: true });
 }
 
