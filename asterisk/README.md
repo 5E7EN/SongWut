@@ -28,7 +28,7 @@ Configured on a FreePBX server.
 -   In your firewall, allow the following inbound ports:
     -   HTTP 80 (restrict to your IP, for FreePBX management)
     -   UDP 5060 (SIP, open to all)
-    -   UDP 10000-20000 (RTP, open to all, or restrict to IP of SIP provider)
+    -   UDP 10000-20000 (RTP, open to all, or restrict to IP of POP)
 
 ### FreePBX Configuration
 
