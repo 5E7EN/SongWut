@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SongWut - A Free Song Identification Service</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+                color: #333;
+            }
+            header {
+                background-color: #0073e6;
+                color: white;
+                padding: 20px 10px;
+                text-align: center;
+            }
+            header h1 {
+                margin: 0;
+            }
+            main {
+                max-width: 800px;
+                margin: 20px auto;
+                padding: 20px;
+                background: white;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            section {
+                margin-bottom: 20px;
+            }
+            section h2 {
+                margin-bottom: 10px;
+                color: #0073e6;
+            }
+            footer {
+                background-color: #333;
+                color: white;
+                text-align: center;
+                padding: 10px;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>SongWut - A Free Song Identification Service</h1>
+        </header>
+        <main>
+            <section>
+                <h2>About the Service</h2>
+                <p>
+                    SongWut provides an automated solution for identifying songs based on audio recordings. By simply dialing our service, you can submit a short audio clip of a
+                    song playing nearby, which our system processes to determine the song's title and artist. If identified, the information is sent to you via SMS. Wut!
+                </p>
+            </section>
+            <section>
+                <h2>How It Works</h2>
+                <ol>
+                    <li>Call the SongWut service number - <a href="tel:18458838863">+1 845-883-8863</a>.</li>
+                    <li>Follow the voice prompts to record a 7-second audio clip of your nearby audio.</li>
+                    <li>Our system analyzes the recording to identify the song.</li>
+                    <li>If a match is found, you will receive a text message with the song details.</li>
+                    <li>If no match is found, or an error occurs, you will hear an appropriate message and can try again.</li>
+                </ol>
+            </section>
+            <section>
+                <h2>Compliance with A2P 10DLC</h2>
+                <p>
+                    SongWut is fully compliant with A2P 10DLC messaging regulations. All text messages are sent to users who have opted into the service by dialing our number and
+                    submitting a recording. Messages are strictly transactional and pertain to the identification of submitted audio clips.
+                </p>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; <span id="year"></span> SongWut. All Rights Reserved.</p>
+        </footer>
+        <script>
+            document.getElementById('year').textContent = new Date().getFullYear();
+        </script>
+    </body>
+</html>

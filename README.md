@@ -1,6 +1,7 @@
 # SongWut
 
 Shazam, but via Phone-In, for yeshivalite. Wut??
+More information: https://songwut.pages.dev
 
 ## Versions
 
@@ -15,6 +16,30 @@ Involves manually buying a DID from your provider of choice (we chose voip.ms), 
 We used Vultr to host the Asterisk/FreePBX server.
 
 More complicated, but more control.
+
+## Mermaid Flowchart
+
+For A2P 10DLC applications, the flowchart is as follows:
+
+```mermaid
+graph TD
+    A[User Calls System] --> B{Key Press Detected?}
+    B -- Yes --> C[Record Audio]
+    B -- No --> Z[Hang Up]
+    C --> D[Process Recording]
+    D --> E{Song Identified?}
+    E -- Yes --> F[Notify User]
+    E -- No --> G[Notify User]
+
+    subgraph via Voice Prompt
+    F
+    G
+    end
+
+    F --> H[Send Text Message With Result]
+    H --> K[Hang Up]
+    G --> K
+```
 
 ## Credits
 
