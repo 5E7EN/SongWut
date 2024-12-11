@@ -11,13 +11,17 @@ Configured on a FreePBX server.
 
 ### SIP Provider
 
--   Get a DID from [voip.ms](https://voip.ms) or your preferred SIP provider
+-   [voip.ms] Purchase a DID: [voip.ms](https://voip.ms)
     -   Configure it as a softphone
+-   [bulkvs] Purchase a DID: [bulkvs.com](https://bulkvs.com)
+    -   Configure IP-based auth settings: https://www.bulkvs.com/faqs/voice-inboundip.php
+-   Or any other perferred SIP provider...
 
 ### Infrastructure
 
 -   Deploy a Debian cloud server for FreePBX -
     -   Minimum RAM: 2GB
+    -   Ensure you have a static IP if using IP-based SIP auth (see bulkvs above)
 -   Install FreePBX -
     -   Log into the system as `root`
     -   Execute install script -
@@ -34,15 +38,28 @@ Configured on a FreePBX server.
 
 -   Open the FreePBX web interface in a browser - `http://<server-ip>`
 -   Follow the setup wizard
--   Go to Connectivity -> Trunks -> Add Trunk -> Add SIP (chan_pjsip) Trunk
+-   [voip.ms] Go to Connectivity -> Trunks -> Add Trunk -> Add SIP (chan_pjsip) Trunk
     -   Trunk Name: voipms
     -   Outbound CallerID: \<voipms DID\>
-    -   Maximum Channels: 2 (prevent abuse, even though we won't be using outbound)
+    -   Maximum Channels: 0 (prevent abuse, even though we won't be using outbound)
     -   -> pjsip Settings:
         ```
         Username: <voipms subaccount username[sipusername_subaccountusername]>
         Secret: <voipms subaccount password>
         SIP Server: <voipms DID server>
+        Context: custom-songwut-handler
+        ```
+    -   Submit
+-   [bulkvs] Go to Connectivity -> Trunks -> Add Trunk -> Add SIP (chan_pjsip) Trunk
+    -   Trunk Name: bulkvs
+    -   Outbound CallerID: \<bulkvs DID\>
+    -   Maximum Channels: 0 (prevent abuse, even though we won't be using outbound)
+    -   -> pjsip Settings:
+        ```
+        Authentication: None
+        Registration: None
+        SIP Server: sip.bulkvs.com
+        SIP Server Port: 5060
         Context: custom-songwut-handler
         ```
     -   Submit
