@@ -1,0 +1,38 @@
+[DEFAULT]
+ignoreip =  127.0.1.1 127.0.0.1 <server-ip> <your-ip>
+sendername = SongWut Alerts
+bantime = 86400
+findtime = 600
+maxretry = 8
+backend = systemd
+
+[asterisk-iptables]
+enabled = true
+filter = asterisk
+action = iptables-allports[name=SIP, protocol=all]
+logpath = /var/log/asterisk/fail2ban
+
+[vsftpd-iptables]
+enabled = true
+filter = vsftpd
+action = iptables-multiport[name=FTP, protocol=tcp, port=ftp]
+logpath = /var/log/vsftpd.log
+
+[sshd]
+enabled = true
+filter = sshd
+action = iptables-multiport[name=sshd, protocol=tcp, port=ssh]
+logpath = /var/log/asterisk/fail2ban
+
+[recidive]
+# recidivist.
+#
+#  Noun: A convicted criminal who reoffends, especially repeatedly.
+#
+enabled  = true
+filter   = recidive
+logpath  = /var/log/fail2ban.log*
+action   = iptables-allports[name=recidive, protocol=all]
+bantime  = 604800  ; 1 week
+findtime = 86400   ; 1 day
+maxretry = 20
