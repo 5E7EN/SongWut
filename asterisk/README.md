@@ -115,23 +115,24 @@ Full instructions coming soon...
     -   Enable verbose logging in `/etc/asterisk/asterisk.conf`
         -   Uncomment the line `;verbose = 0` and set to `verbose = 3`
         -   This ensures we can see call logs in `/var/log/asterisk/full`. Disable this if storage is a concern.
-    -   Follow [instructions below](#security-running-asterisk-as-a-non-root-user) to run Asterisk as a non-root user
+-   Follow [instructions below](#security-running-asterisk-as-a-non-root-user) to configure Asterisk to run as a non-root user
     -   Restart asterisk core & reload dialplan
         -   `asterisk -rx "core restart now"`
         -   `asterisk -rx "dialplan reload"`
         -   `asterisk -rx 'logger reload'`
         -   `asterisk -rvvvvv`
         -   `systemctl restart asterisk`
--   Install fail2ban (still in process of setting up and configuring) -
+-   Install fail2ban -
     -   `apt install fail2ban`
     -   Copy files in `/etc/fail2ban` to the server
         In `jail.local`:
         -   Replace `<your-email>` with your email address (for intrusion alerts)
         -   Replace `<server-ip>` with your server's public IP address
         -   Replace `<your-ip>` with your public IP address (for whitelisting)
--   Setup node.js and copy detection scripts -
+-   Set up detection scripts -
 
-    -   Install nodejs via NVM (v16.20.2 works fine)
+    -   **Switch to `asterisk` user - `su - asterisk`**
+    -   Install nodejs via NVM (v22.12.0, specifically - since we're using absolute path to call `node` in the dailplan)
         -   Download NVM - `wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash`
         -   Enable NVM -
             ```bash
@@ -139,45 +140,48 @@ Full instructions coming soon...
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
             [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
             ```
-        -   Install node - `nvm install 16.20.2`
+        -   Install node - `nvm install 22.12.0`
         -   Install yarn - `npm install -g yarn`
     -   Copy `detectAndNotify.js`, `package.json`, and `yarn.lock` from the [songwut script folder](./var/lib/asterisk/agi-bin/songwut) to `/var/lib/asterisk/agi-bin/songwut`, and then make the detection script executable -
         ```bash
-        # Make the script executable
+        # Make the script executable (will need `sudo` if owned/copied as root)
         chmod +x /var/lib/asterisk/agi-bin/songwut/detectAndNotify.js
         ```
     -   Create a `.env` file in the songwut folder using the [.env.example](./var/lib/asterisk/agi-bin/songwut/.env.example) template and populate it.
     -   Install project dependencies - `yarn install`
-    -   Set owner of script files to asterisk user -
+    -   Set owner of script files to asterisk user, if copied/created as root -
         ```bash
         # Set owner as asterisk
-        chown -R asterisk:asterisk /var/lib/asterisk/agi-bin/songwut
+        sudo chown -R asterisk:asterisk /var/lib/asterisk/agi-bin/songwut
         ```
 
 -   Upload IVR recordings -
     -   Copy files in `/var/lib/asterisk/sounds/en/custom` to the server (create `custom` folder if not exists)
         -   If creating the `custom` folder as root, make sure to set the owner to `asterisk`:
         ```bash
+        exit # Switch from asterisk user to root
         chown -R asterisk:asterisk /var/lib/asterisk/sounds/en/custom
         ```
         -   You might need to temporarily change the owner to your SSH user to upload the files via SFTP, then change it back to `asterisk` after the upload is complete using the command above.
+-   **Switch back to root user - `exit`**
+-   Install some required packages -
+    -   Sox - `apt install sox -y` - For determining the duration of audio files in dailplan
+    -   FFmpeg - `apt install ffmpeg -y` - For audio conversion in detection script
 -   Copy the contents of [/etc/asterisk/extensions.conf](./etc/asterisk/extensions.conf) to `/etc/asterisk/extensions.conf` (delete the existing contents, if any)
 -   Reload the dialplan - `asterisk -rx "dialplan reload"`
-
-We use SIP-based auth, not IP like above - even for bulkvs.  
-Follow their registration instructions for [SIP Registration](https://i.5e7en.me/pwu0aHqX9qnr.png) and set the credentials as required in `/etc/asterisk/pjsip.auth.conf`.  
-The configs are already mostly pre-filled with SIP server info for bulkvs - only excluding auth-related details.
-
-We use fail2ban, even though **SSH should be setup as whitelist only by source IP**, and also because it can help with attacks against asterisk. Check out the [jail](./etc/fail2ban/jail.local) config for our implementation.
+-   Recommended: Do a final change of ownership of the Asterisk files to the asterisk user to ensure everything is set up correctly if something was missed ([instructions below](#security-running-asterisk-as-a-non-root-user)[#2])
 
 #### Security: Running Asterisk as a Non-Root User
 
--   Create a new user and group for Asterisk
+1.  Create a new user and group for Asterisk
+
     ```bash
     groupadd asterisk
-    useradd -r -m -g asterisk asterisk
+    useradd -m -s /bin/bash -g asterisk asterisk
     ```
--   Change the ownership of the Asterisk files to the new user and group
+
+2.  Change the ownership of the Asterisk files to the new user and group
+
     ```bash
     chown -R asterisk:asterisk \
     /etc/asterisk \
@@ -188,17 +192,33 @@ We use fail2ban, even though **SSH should be setup as whitelist only by source I
     /var/run/asterisk \
     /usr/sbin/asterisk
     ```
--   Set asterisk to run as the new user in `/etc/asterisk/asterisk.conf`
+
+3.  Set asterisk to run as the new user in `/etc/asterisk/asterisk.conf`
+
     -   Uncomment these lines (`;runuser` and `;rungroup`) and set them:
+
     ```bash
     runuser = asterisk
     rungroup = asterisk
     ```
--   Restart Asterisk - `systemctl restart asterisk`
+
+4.  Restart Asterisk - `systemctl restart asterisk` (may need to run twice to actually restart for some reason)
+
+#### Notes
+
+We use SIP-based auth, not IP like above - even for bulkvs.  
+Follow their registration instructions for [SIP Registration](https://i.5e7en.me/pwu0aHqX9qnr.png) and set the credentials as required in `/etc/asterisk/pjsip.auth.conf`.  
+The configs are already mostly pre-filled with SIP server info for bulkvs - only excluding auth-related details.
+
+We use fail2ban, even though **SSH should be setup as whitelist only by source IP**, and also because it can help with attacks against asterisk. Check out the [jail](./etc/fail2ban/jail.local) config for our implementation.
 
 ### Testing
 
 -   Test the setup by calling your number!
+
+## Additional Information
+
+See the README.md files in the various folders throughout the repo for more information on the scripts and configurations that lie therein.
 
 ## Helpful Commands
 
@@ -211,6 +231,7 @@ We use fail2ban, even though **SSH should be setup as whitelist only by source I
     -   Asterisk CLI: `asterisk -r`
     -   `pjsip send register voipms`
 -   Standalone Asterisk:
+-   `nano /etc/asterisk/extensions.conf`
 -   `asterisk -rx "core restart now"`
 -   `asterisk -rvvvvv`
 -   `service asterisk status`

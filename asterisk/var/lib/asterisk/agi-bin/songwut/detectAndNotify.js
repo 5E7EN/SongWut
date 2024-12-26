@@ -16,6 +16,7 @@ const SHAZAM_RESPONSES_DIR = path.join(__dirname, 'responses'); // Directory for
 const LOGS_DIR = path.join(__dirname, 'logs'); // Directory for log files
 const audioClipPath = process.argv[2]; // Path to the recorded file passed from Asterisk
 const callerNumber = process.argv[3]; // Caller ID passed from Asterisk
+const callerName = process.argv[4]; // Caller ID name passed from Asterisk (optional)
 const audioClipFilename = path.basename(audioClipPath, path.extname(audioClipPath)); // Filename without path or extension
 
 // Create winston logger
@@ -56,6 +57,7 @@ if (!audioClipPath || !callerNumber) {
 } else {
     logger.debug(`Processing audio file: ${audioClipPath}`);
     logger.debug(`Caller number: ${callerNumber}`);
+    if (callerName) logger.debug(`Caller name (CNAM): ${callerName}`);
 }
 
 // Ensure responses dir exist, create if not
@@ -179,7 +181,7 @@ async function identifyAudioFile(filePath) {
                 process.stdout.write('success');
             }
 
-            // TODO: Send text message with song and artist to callerNumber
+            // TODO: Send text message with song and artist to callerNumber (only if DEBUG__LOG_TO_CONSOLE is false, otherwise just return and log "debug; text not sent")
         }
 
         // Delete raw audio file

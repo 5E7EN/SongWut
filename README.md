@@ -19,7 +19,7 @@ More complicated, but more control.
 
 ## Mermaid Flowchart
 
-For A2P 10DLC applications, the flowchart is as follows:
+For A2P 10DLC applications, the Asterisk dailplan flowchart is as follows:
 
 ```mermaid
 graph TD
@@ -43,4 +43,4 @@ graph TD
 
 ## Credits
 
--   Special thanks to YumiR for his vast knowledge and dedication towards the Asterisk version. It wouldn't have happened without him.
+-   Special thanks to YumiR for his vast knowledge and assistance. It wouldn't have happened without him.
