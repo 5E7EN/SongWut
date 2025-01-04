@@ -2,7 +2,7 @@
 FROM debian:bullseye
 
 # Metadata
-LABEL maintainer="5e7en7@protonmail.com"
+LABEL maintainer="5E7EN"
 LABEL description="SongWut Asterisk App"
 
 # Environment Variables
