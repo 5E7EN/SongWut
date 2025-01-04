@@ -10,6 +10,7 @@ set -e
 : "${SERVER_IP:?Environment variable SERVER_IP is required}"
 : "${YOUR_IP:?Environment variable YOUR_IP is required}"
 : "${SERVER_NETWORK_SUBNET:?Environment variable SERVER_NETWORK_SUBNET is required}"
+: "${SHAZAM_API_KEY:?Environment variable SHAZAM_API_KEY is required}"
 
 # Replace placeholders in Asterisk configuration files
 #* Files are owned by `asterisk` user
