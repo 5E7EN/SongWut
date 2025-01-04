@@ -125,3 +125,7 @@ graph TD
 ## Credits
 
 -   Special thanks to YumiR for his vast knowledge and assistance. It wouldn't have happened without him.
+
+## License
+
+This project is licensed under the AGPLv3 License - see the [LICENSE](./LICENSE) file for details.
