@@ -56,7 +56,6 @@ RUN sed -i 's/;runuser = asterisk/runuser = asterisk/' /etc/asterisk/asterisk.co
 RUN sed -i 's/;verbose = 3/verbose = 3/' /etc/asterisk/asterisk.conf
 
 # Copy asterisk configuration files
-#! .dockerignore is being ignored. not cool docker
 COPY ./etc/asterisk /etc/asterisk
 COPY ./var/lib/asterisk/sounds/en/custom /var/lib/asterisk/sounds/en/custom
 COPY ./var/lib/asterisk/agi-bin/songwut /var/lib/asterisk/agi-bin/songwut
