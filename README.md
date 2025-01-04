@@ -16,15 +16,12 @@ An API serving as a backend for Twilio webhook calls.
 
 ### Asterisk (`asterisk/`)
 
-A custom phone system powered by Asterisk (and FreePBX if you want).  
-Involves manually buying a DID from your provider of choice (we chose voip.ms), setting up a SIP trunk, and configuring the dialplan.  
-We used Vultr to host the Asterisk/FreePBX server.
+A custom phone system powered by Asterisk and Docker. See there for step-by-step deployment instructions.  
+Involves manually buying a DID from your provider of choice (we chose bulk.vs).
 
-More complicated, but more control.
+## Flowchart
 
-## Mermaid Flowchart
-
-For A2P 10DLC applications, the Asterisk dailplan flowchart is as follows:
+When a call comes in, the user is routed as follows, as per the dailplan:
 
 ```mermaid
 graph TD

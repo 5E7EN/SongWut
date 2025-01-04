@@ -30,7 +30,7 @@ const logger = winston.createLogger({
                 `[${audioClipFilename}] ${message}`
         )
     ),
-    // Log to files (`combined.log` and `<audioClipFilename>.log` in `./logs`)
+    // Log to files (`full.log` and `<audioClipFilename>.log` in `./logs`)
     // Or, if debug mode is set, log to console only
     transports: !DEBUG__LOG_TO_CONSOLE
         ? [
@@ -42,7 +42,7 @@ const logger = winston.createLogger({
         : [new winston.transports.Console()]
 });
 
-// Indicate beginning of log
+// Indicate beginning of log of current execution
 logger.info('---');
 
 // Ensure clip path and caller number were provided
@@ -148,6 +148,30 @@ async function identifyAudioFile(filePath) {
     }
 }
 
+async function sendSms(callerNumber, shazamResult) {
+    const song = shazamResult?.track?.title || 'unknown';
+    const artist = shazamResult?.track?.subtitle || 'unknown';
+
+    //! NOT YET IMPLEMENTED, A2P 10DLC GRRRR.....
+    //* Feel free to implement this part yourself, considering you're approved for A2P 10DLC
+    //* You can use axios or any other library (that may be provided by the provider) to send your SMS
+    // Send SMS, assuming not in debug mode
+    if (DEBUG__LOG_TO_CONSOLE !== true) {
+        // TODO: Send text message with song and artist to `callerNumber`
+        // Example:
+        // await axios.post('https://api.example.com/sms', {
+        //     to: callerNumber,
+        //     message: `You just heard "${song}" by "${artist}"!`
+        // });
+
+        logger.info(
+            'Text message not sent; not yet implemented. User notified falsely via voice response :('
+        );
+    } else {
+        logger.info('Text message not sent; debug mode enabled.');
+    }
+}
+
 (async () => {
     // Ensure audio file exists
     if (!fs.existsSync(audioClipPath)) {
@@ -181,7 +205,8 @@ async function identifyAudioFile(filePath) {
                 process.stdout.write('success');
             }
 
-            // TODO: Send text message with song and artist to callerNumber (only if DEBUG__LOG_TO_CONSOLE is false, otherwise just return and log "debug; text not sent")
+            // Send SMS (not yet implemented)
+            await sendSms(callerNumber, shazamResult);
         }
 
         // Delete raw audio file
