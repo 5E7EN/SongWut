@@ -128,5 +128,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Docker volume data
+docker-volumes/
+
 # Misc.
 temp/

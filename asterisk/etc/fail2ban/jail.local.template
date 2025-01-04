@@ -1,5 +1,5 @@
 [DEFAULT]
-ignoreip =  127.0.1.1 127.0.0.1 <server-ip> <your-ip>
+ignoreip =  127.0.1.1 127.0.0.1 ${SERVER_IP} ${YOUR_IP}
 sendername = SongWut Alerts
 bantime = 86400
 findtime = 600

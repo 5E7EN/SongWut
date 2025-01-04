@@ -1,0 +1,6 @@
+[bulkvs]
+type=auth
+auth_type=userpass
+password=${SIP_PASSWORD}
+username=${SIP_USERNAME}
+

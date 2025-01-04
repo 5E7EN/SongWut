@@ -1,0 +1,23 @@
+services:
+  songwut-docker:
+    image: songwut-docker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: asterisk
+    volumes:
+      - ./docker-volumes/asterisk-logs:/var/log/asterisk
+      - ./docker-volumes/songwut-logs:/var/lib/asterisk/agi-bin/songwut/logs
+      - ./docker-volumes/songwut-responses:/var/lib/asterisk/agi-bin/songwut/responses
+    env_file:
+      - .env
+    ports:
+      - "5060:5060/udp" # SIP port
+      # Commented out since it was slowing everything down (it's explicitly opening all ports between that range...)
+      # - "10000-20000:10000-20000/udp" # RTP range
+    restart: unless-stopped
+
+volumes:
+  asterisk-logs:
+  songwut-logs:
+  songwut-responses:

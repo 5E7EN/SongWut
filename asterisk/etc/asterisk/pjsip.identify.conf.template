@@ -1,5 +1,5 @@
 [bulkvs]
 type=identify
 endpoint=bulkvs
-match=sip.bulkvs.com
+match=${SIP_SERVER_HOST}
 

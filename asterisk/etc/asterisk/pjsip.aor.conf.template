@@ -1,0 +1,4 @@
+[bulkvs]
+type=aor
+qualify_frequency=60
+contact=sip:${SIP_USERNAME}@${SIP_SERVER_HOST}:${SIP_SERVER_PORT}

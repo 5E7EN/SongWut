@@ -2,13 +2,13 @@
 type=registration
 transport=0.0.0.0-udp
 outbound_auth=bulkvs
-retry_interval=60
-fatal_retry_interval=30
+retry_interval=15
+fatal_retry_interval=15
 forbidden_retry_interval=30
 max_retries=10000
 expiration=24
 auth_rejection_permanent=no
 line=yes
 endpoint=bulkvs
-server_uri=sip:sip.bulkvs.com:5060
-client_uri=sip:<username-in-pjsip.auth>@sip.bulkvs.com:5060
+server_uri=sip:${SIP_SERVER_HOST}:${SIP_SERVER_PORT}
+client_uri=sip:${SIP_USERNAME}@${SIP_SERVER_HOST}:${SIP_SERVER_PORT}

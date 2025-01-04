@@ -1,6 +1,6 @@
 # Asterisk
 
-Configured on a FreePBX server.
+Configured on a FreePBX server or standalone Asterisk w/ Docker.
 
 ## Setup
 
@@ -106,12 +106,15 @@ Full instructions coming soon...
 
 -   Download, compile, and install Asterisk 20 - [Official Guide](https://docs.asterisk.org/Getting-Started/Installing-Asterisk/Installing-Asterisk-From-Source/What-to-Download/) -
     -   Copy the files in `/etc/asterisk` to the server
-        Replace these placeholders found among the config files (mostly in `pjsip.*.conf`):
-        -   `<bulkvs-trunk-username[sipusername_trunkname]>` - your SIP username/trunk name in bulkvs (e.g. `123456_trunkname`)
-        -   `<username-in-pjsip.auth>` - same value as above
-        -   `<bulkvs-trunk-password>` - your SIP password in bulkvs (as created in the "Manage Trunk Group - SIP Registration" dialog)
-        -   `<server-ip>` - your server's public IP address
-        -   `<server-network-subnet>` - your server's network address (e.g. `1.2.3.0/24`) (I might've named this variable wrong, I'm not a networking guy)
+        -   If the filename ends with `.template`, it has variables that need to be replaced, as defined below. Remove the `.template` extension once replaced:
+        -   `${SIP_SERVER_HOST}` - SIP server hostname (bulkvs: `sip.bulkvs.com`)
+            Replace these placeholders found among the config files (mostly in `pjsip.*.conf`):
+        -   `${SIP_SERVER_PORT}` - SIP server port (usually `5060`)
+            Replace these placeholders found among the config files (mostly in `pjsip.*.conf`):
+        -   `${SIP_USERNAME}` - your SIP username/trunk name in bulkvs (e.g. `123456_trunkname`)
+        -   `${SIP_PASSWORD}` - your SIP password in bulkvs (as created in the "Manage Trunk Group - SIP Registration" dialog)
+        -   `${SERVER_IP}` - your server's public IP address
+        -   `${SERVER_NETWORK_SUBNET}` - your server's network address (e.g. `1.2.3.0/24`) (I might've named this variable wrong, I'm not a networking guy)
     -   Enable verbose logging in `/etc/asterisk/asterisk.conf`
         -   Uncomment the line `;verbose = 0` and set to `verbose = 3`
         -   This ensures we can see call logs in `/var/log/asterisk/full`. Disable this if storage is a concern.
@@ -125,10 +128,9 @@ Full instructions coming soon...
 -   Install fail2ban -
     -   `apt install fail2ban`
     -   Copy files in `/etc/fail2ban` to the server
-        In `jail.local`:
-        -   Replace `<your-email>` with your email address (for intrusion alerts)
-        -   Replace `<server-ip>` with your server's public IP address
-        -   Replace `<your-ip>` with your public IP address (for whitelisting)
+        In `jail.local.template`, replace these variables, and remove `.template` extension:
+        -   Replace `${SERVER_IP}` with your server's public IP address
+        -   Replace `${YOUR_IP}` with your public IP address (for whitelisting)
 -   Set up detection scripts -
 
     -   **Switch to `asterisk` user - `su - asterisk`**

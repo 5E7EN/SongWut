@@ -1,0 +1,6 @@
+**/node_modules
+**/logs
+**/responses
+**/temp
+**/extensions_custom.json
+**/.env
