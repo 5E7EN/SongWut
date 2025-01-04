@@ -11,7 +11,7 @@
 </p>
 
 <p align='center'>
-  <a href="./asterisk/Dockerfile"><img alt="Docker Icon" src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white" /></a>
+  <a href="./Dockerfile"><img alt="Docker Icon" src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white" /></a>
 </p>
 
 ## Setup
