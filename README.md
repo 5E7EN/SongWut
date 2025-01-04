@@ -1,7 +1,12 @@
-# SongWut
+<h1 align='center'>
+  SongWut
+</h1>
 
-Shazam, but via Phone-In, for yeshivalite. Wut??
-More information: https://songwut.pages.dev
+<p align='center'>
+  Shazam, but via Phone-In, for yeshivalite. Wut??
+  <br />
+  More information: https://songwut.pages.dev
+</p>
 
 ## Versions
 
