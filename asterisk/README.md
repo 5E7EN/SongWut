@@ -11,15 +11,40 @@ Configured on a FreePBX server or standalone Asterisk w/ Docker.
 ### Shazam API
 
 -   Get a free Shazam API key by subscribing to the BASIC tier on this RapidAPI project: https://rapidapi.com/apidojo/api/shazam
-    -   Keep it handy for the upcoming steps
+-   Keep it handy for the upcoming steps
 
 ### SIP Provider
 
--   [voip.ms] Purchase a DID: [voip.ms](https://voip.ms)
-    -   Configure it as a softphone
--   [bulkvs] Purchase a DID: [bulkvs.com](https://bulkvs.com)
-    -   Configure IP-based auth settings: https://www.bulkvs.com/faqs/voice-inboundip.php
+-   [Cheapest] BulkVS - Purchase a DID: [bulkvs.com](https://bulkvs.com)
+-   [Premium Quality] VoipMS - Purchase a DID: [voip.ms](https://voip.ms)
+    -   Configure the it as a softphone
 -   Or any other perferred SIP provider...
+
+### Cloud VPS
+
+-   Deploy a cloud server
+    -   Recommended: [Vultr](https://www.vultr.com/?ref=9004439) (referral link)
+    -   Minimum specs: 512MB RAM, 1vCPU, 10GB SSD (keep an eye out as the logs can fill up the disk)
+    -   OS: Debian 11 or 12 64-bit
+
+## Deployment
+
+### Docker
+
+-   Install Docker on your server - [Official Guide](https://docs.docker.com/engine/install/debian/)
+-   Clone the repo, and navigate to the `asterisk` directory
+-   Copy the `.env.example` file to `.env` and populate it with the required values
+    -   `SIP_SERVER_HOST` - SIP server hostname (bulkvs: `sip.bulkvs.com`)
+    -   `SIP_SERVER_PORT` - SIP server port (usually `5060`)
+    -   `SIP_USERNAME` - your SIP username (bulkvs: trunk name, e.g. `123456_trunkname`)
+    -   `SIP_PASSWORD` - your SIP password (bulkvs: as created in the "Manage Trunk Group - SIP Registration" dialog)
+    -   `SERVER_IP` - your cloud server's public IP address
+    -   `YOUR_IP` - your public IP address (for fail2ban whitelisting)
+    -   `SERVER_NETWORK_SUBNET` - your cloud server's network address (e.g. `1.2.3.0/24`) (I might've named this variable wrong, I'm not a networking guy)
+    -   `SHAZAM_API_KEY` - Your Shazam API key, as obtained above
+-   Build the Docker image using compose - `docker-compose build`
+-   Run the Docker container headless using compose - `docker-compose up -d`
+    -   For testing, omit the `-d` flag to stay attached to the container and see the logs in real-time
 
 ### FreePBX Deployment
 
