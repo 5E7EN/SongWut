@@ -38,7 +38,7 @@
 ## Runnification
 
 -   Install Docker on your server - [Official Guide](https://docs.docker.com/engine/install/debian/)
--   Clone the repo, and navigate to the `asterisk` directory
+-   Clone the repo
 -   Copy the `.env.example` file to `.env` and populate it with the required values
     -   `SIP_SERVER_HOST` - SIP server hostname (bulkvs: `sip.bulkvs.com`)
     -   `SIP_SERVER_PORT` - SIP server port (usually `5060`)
