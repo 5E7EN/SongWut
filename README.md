@@ -66,6 +66,13 @@
     -   `songwut-responses` - SongWut detection script Shazam API JSON responses
         -   Pro Tip: Response files that are associated with a successful detection are prepended with the `^` character
 
+### Sending SMS
+
+To send SMS notifications upon successful song detection, you'll need a phone number from an SMS provider that's been approved for A2P 10DLC.  
+This is where I got stuck and just decided to open source this project since I wasn't applying as a business and therefore wasn't getting approved.  
+Once you've gotten approval, impement the `sendSms` function in the detection script [here](./var/lib/asterisk/agi-bin/songwut/detectAndNotify.js#L151) to send messages. See the example there.  
+You can and should use the implementation as provided by your provider for the best results (whether in the form of a node.js package, REST API, or something else).
+
 ## Additional Information
 
 See the README.md files in the various folders throughout the repo for more information on the scripts and configurations that lie therein.
